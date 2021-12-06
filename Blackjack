@@ -1,0 +1,249 @@
+clc
+clear
+
+%%
+
+%Welcome message, explaining rules to players and how games work
+fprintf('Welcome to Blackjack!\n\n')
+fprintf('Here is a quick set of instructions in case you are new:\n')
+fprintf('Blackjack is card game where you are trying to have you cards add to 21 or as close as you can. If you go over you have busted and lost the game.\n')
+fprintf('You must beat the dealer in order to win!\n')
+fprintf('You are initially dealt two cards and can choose to hit (be dealt another card) or to stick (remain with your cards).\n')
+fprintf('Jacks, Queens, and Kings are 10. Aces can either be 1 or 11 (depending on what you are dealt).\n')
+fprintf('If you win you can earn various discounts off your next purchase at a partnered retailer.\n\n')
+fprintf('Good luck! Get ready to play!\n\n\n')
+
+
+%%
+
+%set array for card values, using 4 decks, set to variable A
+A = [2,3,4,5,6,7,8,9,10,10,10,10,11,2,3,4,5,6,7,8,9,10,10,10,10,11,2,3,4,5,6,7,8,9,10,10,10,10,11,2,3,4,5,6,7,8,9,10,10,10,10,11];
+
+%give player first card for their hand
+card1 = ceil(52*rand);
+playerHand1 = A(card1);
+A(card1) = [];
+
+%give dealer first card for their hand
+card2=ceil(51*rand);
+dealerHand1 = A(card2);
+A(card2)= [];
+ 
+%give player second card for their hand
+card3 = ceil(50*rand);
+playerHand2 = A(card3);
+A(card3)= [];
+ 
+%give dealer second card for their hand
+card4 = ceil(49*rand);
+dealerHand2 =A(card4);
+A(card4) = [];
+
+
+dh = dealerHand1+dealerHand2; %dh = sum dealers hand
+
+ph = playerHand1+playerHand2; %ph = sum players hand
+
+initialBet = input('What will your bet be? Enter a number: ');
+
+%display information player needs to know before game continues (their
+%hand and bet and dealers hand)
+fprintf('Your current hand is %.0f and your bet is $%.0f. The dealers hand is %.0f.\n\n', ph, initialBet, dh)
+
+
+%%
+
+%setting up players play route, depending on the sum of their first two cards
+
+%if players first two cards equal 21 they win, so they automatically choose
+%to stick (set as 3 so that dealer is not dealt another card)
+if (ph==21)
+   userDecision = 3;
+
+%if dealers first two cards equal 21 dealer wins so players automatically choose to
+%hit to try and tie
+elseif (dh==21)
+    userDecision = 3;
+
+%if both players and dealers first two cards add to 21, they tie and both win, player earns bet back 
+% user decision is automatically stick (set as 3 so that dealer is not dealt another card)
+elseif (ph==21) && (dh==21)
+    userDecision = 3;
+
+%if players hand is greater than 21, they bust and lose their money 
+elseif (ph>21)
+    userDecision = 3;
+ 
+%if dealer busts and player is under or at 21, they automatically stick and
+%win (set as 3 so that dealer is not dealt another card)
+elseif (dh>21) && (ph <= 21)
+    userDecision = 3;
+
+%if dealers hand is at or more than 17 and players hand is less than or
+%equal to 21 while also being greater than dealers hand, player wins
+elseif (dh >= 17) && (ph>dh) && (ph<=21)
+    fprintf('Reminder, if the dealers hand is less than 17 they can still hit.\n\n')
+    userDecision = input('Would you like to hit or stick? 1 for hit, 2 for stick: ');
+
+%if none of the above happen, then the player gets to choose to hit or stick
+else
+    fprintf('Reminder, if the dealers hand is less than 17 they can still hit.\n\n')
+    userDecision = input('Would you like to hit or stick? 1 for hit, 2 for stick: ');
+
+end
+
+
+%%
+
+%error message pops up if a 1 or 2 is not entered into userDecision
+while userDecision ~= [1,2]
+    fprintf('Invalid input!')
+    userDecision = input('Would you like to hit or stick? 1 for hit, 2 for stick: ');
+end 
+
+
+%%
+
+%userDecision == 3
+
+%when user decision is automatically set to 3, meaning player no longer has
+%to draw or do anything and dealer cannot draw again (based on above)
+
+%this section prints out statements to command window
+while userDecision == 3
+   
+    if (ph == 21)
+           fprintf('You hit BlackJack! Woohoo! You doubled your money and won $%.0f. And you earned a $2 discount.\n\n',(initialBet*2))
+           break
+
+    elseif (dh==21)
+            fprintf('Dealer hit BlackJack on first try! Darn you lose all your money, better luck next time!\n\n')
+            break 
+
+    
+    elseif (ph == 21) && (dh == 21)
+        fprintf('You and the dealer both ended with Blackjack. You earn back your bets.\n\n')
+        break
+    
+    elseif (ph>21)
+        fprintf('Unlucky you busted as you hit higher than 21. You lose your money. Better luck next time!\n\n')
+        break
+
+    
+    elseif (dh>21) && (ph <= 21)
+        fprintf('Dealer busted because they hit higher than 21. You automatically win!\n\n')
+        break
+
+    elseif (dh >= 17) && (ph>dh) && (ph<=21)
+        fprintf('Nice you won! Your payout is $%.0f and you have earned a 25 cent discount!\n\n', 1.5*initialBet)
+        break
+    
+    end 
+end 
+
+
+
+
+%%
+
+%userDecision == 1
+
+%this loop will run when a player chooses to hit and dealers hand is less than 17, dealer must
+%draw a random card until their sum is greater than 17
+while (userDecision == 1) && (dh < 17) && (ph<21)
+    newcard = randi(11);
+    dh = newcard + dh;
+    
+    fprintf('Dealers cards were under 17 so they had to draw. The dealer pulled a new card value of %.0f, which makes their total be %.0f\n\n', newcard,dh)
+
+
+    %if dealers new card causes their hand to be greater than 21, dealer busts and player automatically
+    %wins
+    if ((dh > 21)) 
+        fprintf('Dealer busts!! You automatically won a payout of $%.0f and earned a discount of 25 cents.\n\n', 1.5*initialBet)
+        break
+
+        newcard = randi(11);
+        ph = newcard + ph;
+        fprintf('You drew a %.0f, your hand is currently %.0f. The dealers hand is %.0f.\n\n', newcard, ph, dh)
+
+    %if hand is still less than 21, user can choose if they want to hit or stick again
+    elseif (ph<21)
+        userDecision = input('Would you like to hit or stick? 1 for hit, 2 for stick: '); 
+
+%if players hand is greater than 21 they have busted
+elseif (ph>21)
+        fprintf('You busted! The dealer takes your money, better luck next time.\n\n')  
+break
+
+%if player hits blackjack, they automatically win
+elseif (ph==21)
+        fprintf('Congrats you hit Blackjack!! You doubled your money and won $%.0f and also earned a discount of $2.\n\n', 2*initialBet)  
+break
+
+%if players hand is greater than dealers hand and dealers hand is also
+%greater than 17 then player wins
+elseif (ph>dh) && (dh>=17)
+        fprintf('You win! You have won $%.0f and earned a discount of 25 cents.\n\n',1.5*initialBet)
+break
+
+end
+end
+
+
+
+%%
+
+%userDecision == 2
+
+
+%this loop will run if player chooses to stay while dealers hand is less than 17
+while (userDecision == 2) && (dh < 17)
+    newcard = randi(11);
+    dh = newcard + dh;
+    
+    fprintf('You chose to stay at %.0f. The dealer pulled a new card value of %.0f, which makes their total be %.0f\n\n', ph, newcard,dh)
+
+%if dealers new card causes their hand to be greater than 21, dealer busts and player automatically
+%wins
+    if ((dh > 21)) 
+        fprintf('Dealer busts!! You automatically won a payout of $%.0f and earned a discount of 25 cents.\n\n', 1.5*initialBet)
+        break
+
+    end
+end 
+
+
+%loop will run when player chooses to stand and dealers hand is between 17-21 or at 17 or 21
+while (userDecision == 2) && (dh>= 17) && (dh<= 21) 
+
+%if dealers hand greater than players hand, dealer wins
+   if (dh>ph)
+        fprintf('Unfortunately you lost, the dealer was closer to 21. The house takes your bet money. Better luck next time!\n\n')
+        break
+
+%if dealers hand is less than players hand, player wins 
+   elseif (ph>dh)
+        fprintf('You won! You win $%.0f and earned a discount of 25 cents.\n\n', 1.5*initialBet)
+        break
+ 
+%if player and dealers hands are equal to each other, both earn their bets back
+   elseif (dh == ph)
+       fprintf('You and the dealer ended with the same number so you both earn back your bets. No discounts received.\n\n')
+   break
+
+%if dealers hand is 21 and players hand is less, dealer wins 
+   elseif (dh==21)
+       fprintf('Dealer hit Blackjack! Dealer wins. You lose the money you bet, better luck next time!\n\n')
+   break
+    
+   end
+end 
+
+
+%% 
+
+%when game ends this message prints telling players how to play again
+fprintf('If you want to play again hit the Run button up top!\n\n')
+
+% 
