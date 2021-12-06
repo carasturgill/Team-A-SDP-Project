@@ -1,0 +1,60 @@
+clc
+clear
+
+%welcome message and rules print for player to read through and understand
+%game
+fprintf('Welcome to the game of under or over seven\n\n')
+ 
+fprintf(['The rules of the game are simple:\n\n' ...
+        'Two dice will be rolled and your job is to decide whether the total sum will be over seven, under seven, or seven\n\n' ...
+        'If you choose over seven but the sum of the dice rolled are less than seven you lose and vice versa for choosing under\n\n'])
+
+%message asking player to play
+play = input('If you are ready to begin, type play: ','s');
+
+%if player does not wish to play or puts in an invalid input, following
+%message pops up
+while player == play 
+    fprintf('Invalid input or you have not chosen to play.\n')
+end
+
+
+%when player chooses to play, the 2 dice are rolled and then summed
+%together
+   if play == play
+       dice1 = randi(6);
+       dice2 = randi(6);
+       sum = dice1+dice2;
+  
+%before player can see sum they are asked to input if they think sum will be over, under or at seven. 
+   input1  = input('Do you think that the sum of the dice will be over seven, under seven, or seven? ','s');
+ 
+%if player does not enter in over, under or seve, an invalid input message pops up
+   while input1 ~= over || under || seven 
+       fprintf('Invalid input!\n')
+       input1  = input('Do you think that the sum of the dice will be over seven, under seven, or seven? ','s');
+   end 
+
+%if under if chosen and sum is under seven, message prints saying player wins 
+   if ((input1 == "under") && (sum < 7))
+       fprintf('Well done, you guessed correctly!')
+    
+%if under if chosen and sum is under seven, message prints saying player wins 
+   elseif ((input1 == "over") && (sum > 7))
+       fprintf('Well done, you guessed correctly!')
+    
+%if under if chosen and sum is under seven, message prints saying player wins 
+   elseif ((input1 == "seven") && (sum == 7))
+       fprintf('Well done, you guessed correctly!')
+   
+%if none of the above occur, message prints saying player loses 
+   else
+       fprintf('Unlucky, you guessed wrong. The number was %.0f. Better luck next time.', sum)
+    end
+   end
+
+
+%when game ends this message prints telling players how to play again
+fprintf('If you want to play again hit the Run button up top!\n\n')
+
+% 
